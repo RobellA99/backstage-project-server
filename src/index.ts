@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import { log } from "console";
 
 const PORT = process.env.PORT || 5050;
 
