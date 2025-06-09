@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import db from "../utils/db"; // Your DB connection file
-import { generateToken } from "../utils/jwt"; // <-- Use your utility
+import db from "../utils/db";
+import { generateToken } from "../utils/jwt";
+import { error } from "console";
 
 const SALT_ROUNDS = 10;
 
@@ -10,6 +11,9 @@ const registerUser = async (req: Request, res: Response) => {
   const { email, password, name } = req.body;
 
   try {
+    if (!email || !password || !name) {
+      return res.status(400).json("Fields are required");
+    }
     const [existing] = await db.query("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
@@ -36,6 +40,9 @@ const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
+    if (!email || !password) {
+      return res.status(400).json("Fields are required");
+    }
     const [users] = await db.query("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
@@ -46,7 +53,6 @@ const loginUser = async (req: Request, res: Response) => {
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) return res.status(401).json({ message: "Invalid password" });
 
-    // Use generateToken utility
     const token = generateToken({ id: user.id, email: user.email });
 
     res.json({
@@ -61,7 +67,7 @@ const loginUser = async (req: Request, res: Response) => {
 
 // GET /api/auth/me
 const getCurrentUser = async (req: Request, res: Response) => {
-  const user = req.user; // Injected by authMiddleware
+  const user = req.user;
   res.json({ user });
 };
 
