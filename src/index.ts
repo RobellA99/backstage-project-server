@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth";
+import serviceRoutes from "./routes/service";
 
 const PORT = process.env.PORT || 5050;
 
@@ -15,6 +16,7 @@ app.get("/", (_req, res) => {
 
 console.log(typeof authRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/services", serviceRoutes);
 
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);

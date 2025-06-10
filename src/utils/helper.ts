@@ -9,6 +9,14 @@ interface UserLoginData {
   password: string;
 }
 
+interface CreateService {
+  name: string;
+  owner: string;
+  status: string;
+  repo_url?: string;
+  docs_slug: string;
+}
+
 function validateUsersRegisterForm(data: UserRegisterData) {
   if (!data.name || !data.email || !data.password) {
     return {
@@ -35,4 +43,21 @@ function validateUsersLoginForm(data: UserLoginData) {
   };
 }
 
-export { validateUsersRegisterForm, validateUsersLoginForm };
+function validateCreateServiceForm(data: CreateService) {
+  if (!data.name || !data.owner || !data.status || !data.docs_slug) {
+    return {
+      success: false,
+      error: "Fields are required",
+    };
+  }
+  return {
+    success: true,
+    data: data,
+  };
+}
+
+export {
+  validateUsersRegisterForm,
+  validateUsersLoginForm,
+  validateCreateServiceForm,
+};
