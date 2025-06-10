@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import db from "../utils/db";
+import connection from "../utils/db";
 import { generateToken } from "../utils/jwt";
 import {
   validateUsersLoginForm,
@@ -20,16 +20,17 @@ const registerUser = async (req: Request, res: Response) => {
   }
 
   try {
-    const [existing] = await db.query("SELECT * FROM users WHERE email = ?", [
-      email,
-    ]);
+    const [existing] = await connection.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
 
     if ((existing as any[]).length > 0) {
       return res.status(400).json({ message: "email already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-    await db.query(
+    await connection.query(
       "INSERT INTO users (email, passwordHash, name) VALUES (?, ?, ?)",
       [email, hashedPassword, name]
     );
@@ -52,9 +53,10 @@ const loginUser = async (req: Request, res: Response) => {
   }
 
   try {
-    const [users] = await db.query("SELECT * FROM users WHERE email = ?", [
-      email,
-    ]);
+    const [users] = await connection.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
     const user = (users as any[])[0];
 
     if (!user) return res.status(404).json({ message: "User not found" });
