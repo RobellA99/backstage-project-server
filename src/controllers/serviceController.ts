@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import connection from "../utils/db";
+import { Service } from "../types";
 
 //Get all
 const getAllServices = async (_req: Request, res: Response) => {
@@ -23,9 +24,9 @@ const getServiceById = async (req: Request, res: Response) => {
   const serviceId = req.params.id;
   const sql = "SELECT * FROM services WHERE id = ?";
   try {
-    const [results] = await connection.query(sql, [serviceId]);
+    const [results] = await connection.query<Service[]>(sql, [serviceId]);
 
-    const service = (results as any[])[0];
+    const service = results[0];
     if (!service) {
       return res
         .status(404)
