@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import db from "../utils/db";
 import { generateToken } from "../utils/jwt";
-import { error } from "console";
+import {
+  validateUsersLoginForm,
+  validateUsersRegisterForm,
+} from "../utils/helper";
 
 const SALT_ROUNDS = 10;
 
@@ -10,16 +13,19 @@ const SALT_ROUNDS = 10;
 const registerUser = async (req: Request, res: Response) => {
   const { email, password, name } = req.body;
 
+  const validationResult = validateUsersRegisterForm(req.body);
+
+  if (!validationResult.success) {
+    return res.status(400).json({ error: validationResult.error });
+  }
+
   try {
-    if (!email || !password || !name) {
-      return res.status(400).json("Fields are required");
-    }
     const [existing] = await db.query("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
 
     if ((existing as any[]).length > 0) {
-      return res.status(400).json({ message: "Email already exists" });
+      return res.status(400).json({ message: "email already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
@@ -39,10 +45,13 @@ const registerUser = async (req: Request, res: Response) => {
 const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
+  const validationResult = validateUsersLoginForm(req.body);
+
+  if (!validationResult.success) {
+    return res.status(400).json({ error: validationResult.error });
+  }
+
   try {
-    if (!email || !password) {
-      return res.status(400).json("Fields are required");
-    }
     const [users] = await db.query("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
