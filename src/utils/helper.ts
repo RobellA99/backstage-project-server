@@ -17,6 +17,10 @@ interface CreateService {
   docs_slug: string;
 }
 
+interface UpdateService extends CreateService {
+  updated: boolean;
+}
+
 function validateUsersRegisterForm(data: UserRegisterData) {
   if (!data.name || !data.email || !data.password) {
     return {
@@ -56,8 +60,28 @@ function validateCreateServiceForm(data: CreateService) {
   };
 }
 
+function validateUpdateServiceForm(data: UpdateService) {
+  if (
+    !data.name ||
+    !data.owner ||
+    !data.status ||
+    !data.docs_slug ||
+    !data.updated
+  ) {
+    return {
+      success: false,
+      error: "Fields are required",
+    };
+  }
+  return {
+    success: true,
+    data: data,
+  };
+}
+
 export {
   validateUsersRegisterForm,
   validateUsersLoginForm,
   validateCreateServiceForm,
+  validateUpdateServiceForm,
 };

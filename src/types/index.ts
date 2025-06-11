@@ -7,3 +7,8 @@ export interface Service {
   docs_slug: string;
   user_id: number;
 }
+
+export interface UserPayload {
+  id: number;
+  email: string;
+}

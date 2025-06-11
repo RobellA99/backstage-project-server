@@ -14,7 +14,6 @@ app.get("/", (_req, res) => {
   res.send("App is running...");
 });
 
-console.log(typeof authRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/services", serviceRoutes);
 
