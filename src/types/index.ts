@@ -8,6 +8,13 @@ export interface Service {
   user_id: number;
 }
 
+export interface Docs {
+  id: number;
+  slug: string;
+  title: string;
+  content: string;
+}
+
 export interface UserPayload {
   id: number;
   email: string;

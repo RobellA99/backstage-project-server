@@ -25,7 +25,7 @@ const getAllServices = async (
 
     res.json(services);
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "Failed to fetch service" });
   }
 };
 
@@ -47,7 +47,7 @@ const getServiceById = async (
     }
     res.json(service);
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "Failed to fetch service" });
   }
 };
 
@@ -68,7 +68,7 @@ const createService = async (
     const [results] = await connection.query(sql, [formData]);
     res.status(201).json({ message: "Service Created" });
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "Failed to cretae service" });
   }
 };
 
@@ -99,7 +99,7 @@ const updateService = async (
     }
     res.json({ message: "Service updated" });
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "Failed to update service" });
   }
 };
 
@@ -119,7 +119,7 @@ const deleteService = async (
 
     res.status(204).end();
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "Failed to delete service" });
   }
 };
 
