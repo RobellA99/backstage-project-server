@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import connection from "../utils/db";
 import { Docs } from "../types";
-import { RowDataPacket } from "mysql2";
-import { validateCreateDocForm } from "../utils/helper";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
+import { validateCreateDocForm, validateUpdateDocForm } from "../utils/helper";
 
 type DocRow = Docs & RowDataPacket;
 
@@ -72,4 +72,36 @@ const createDoc = async (
   }
 };
 
-export { getDocSlugs, getDocBySlug };
+const updateDoc = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
+  const formData = req.body;
+  const docId = req.params.id;
+  const sql = "UPDATE docs SET ? docs.id = ?";
+
+  const validationResult = validateUpdateDocForm(formData);
+
+  if (!validationResult.success) {
+    return res.status(400).json({ error: validationResult.error });
+  }
+
+  try {
+    const [results] = await connection.query<ResultSetHeader>(sql, [
+      formData,
+      docId,
+    ]);
+
+    if (results.affectedRows === 0) {
+      return res
+        .status(404)
+        .json({ message: `No record with ID ${docId} found` });
+    }
+
+    res.json({ message: "Doc updated" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update doc" });
+  }
+};
+
+export { getDocSlugs, getDocBySlug, createDoc, updateDoc };
